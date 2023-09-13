@@ -3,13 +3,17 @@ package com.example.demoar
 import android.app.Activity
 import android.app.ActivityManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import android.view.Gravity
 import android.view.PixelCopy
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -21,6 +25,7 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.FixedHeightViewSizer
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.ArFragment
+import com.google.ar.sceneform.ux.TransformableNode
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -135,6 +140,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun addNode() {
 
+        val imageView = ImageView(this)
+        Glide.with(this)
+            .load(R.drawable.circle_forcus)
+            .apply(RequestOptions().centerCrop())
+            .override(100, 100)
+            .into(imageView)
+
+        ViewRenderable.builder()
+            .setView(this, imageView)
+            .build()
+            .thenAccept { viewRenderer ->
+                val node = TransformableNode(arFragment?.transformationSystem)
+                node.renderable = viewRenderer
+                node.setOnTapListener { _, _ ->
+                    node.worldPosition = arFragment?.arSceneView?.scene?.camera?.worldPosition
+
+                }
+
+            }
+            .exceptionally {
+                Log.e(TAG, "$it")
+                null
+            }
+
+
         val distance = sqrt(3.0)
         val width = 2.0
 
@@ -187,6 +217,33 @@ class MainActivity : AppCompatActivity() {
                     arFragment?.arSceneView?.scene?.addChild(anchorNode)
                     anchorNode.localRotation = rotations[i]
                     anchorNode.renderable = viewRenderer
+
+                    val textView = TextView(this)
+                    textView.text = "x"
+                    textView.setTextColor(Color.RED)
+                    textView.textSize = 50f
+
+                    val layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    layoutParams.gravity = Gravity.CENTER
+                    textView.layoutParams = layoutParams
+
+                    val textNode = Node()
+                    ViewRenderable.builder()
+                        .setView(this, textView)
+                        .build()
+                        .thenAccept { viewRenderable ->
+                            textNode.renderable = viewRenderable
+                        }
+                        .exceptionally {
+                            Log.e(TAG, "$it")
+                            null
+                        }
+
+                    textNode.localPosition = Vector3(0.0f, 0.75f, 0.1f)
+                    anchorNode.addChild(textNode)
                 }
                 .exceptionally {
                     Log.e(TAG, "$it")
@@ -204,12 +261,12 @@ class MainActivity : AppCompatActivity() {
         )
 
         val topRotations = listOf(
-            Quaternion(0f, 1f, PI.toFloat() / 4f, 0f),
-            Quaternion(-PI.toFloat() / 3f, 1f, -PI.toFloat() / 4f, -PI.toFloat() / 2f),
-            Quaternion(-PI.toFloat() / 6f, 1f, -PI.toFloat() / 4f, -2 * PI.toFloat() / 8f),
-            Quaternion(0f, 1f, -PI.toFloat() / 4f, 0f),
-            Quaternion(PI.toFloat() / 6f, 1f, -PI.toFloat() / 4f, 2 * PI.toFloat() / 8f),
-            Quaternion(PI.toFloat() / 2f, 1f, -PI.toFloat() / 4f, PI.toFloat() / 2f),
+            Quaternion(0f, 1f, 0f, 0f),
+            Quaternion(0f, 1f, 0f, -PI.toFloat() / 2f),
+            Quaternion(0f, 1f, 0f, -2 * PI.toFloat() / 8f),
+            Quaternion(0f, 1f, 0f, 0f),
+            Quaternion(0f, 1f, 0f, 2 * PI.toFloat() / 8f),
+            Quaternion(0f, 1f, 0f, PI.toFloat() / 2f),
         )
 
         for (i in 0 until 6) {
@@ -232,7 +289,32 @@ class MainActivity : AppCompatActivity() {
                     arFragment?.arSceneView?.scene?.addChild(anchorNode)
                     anchorNode.localRotation = topRotations[i]
                     anchorNode.renderable = viewRenderer
+                    val textView = TextView(this)
+                    textView.text = "x"
+                    textView.setTextColor(Color.RED)
+                    textView.textSize = 50f
 
+                    val layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    layoutParams.gravity = Gravity.CENTER
+                    textView.layoutParams = layoutParams
+
+                    val textNode = Node()
+                    ViewRenderable.builder()
+                        .setView(this, textView)
+                        .build()
+                        .thenAccept { viewRenderable ->
+                            textNode.renderable = viewRenderable
+                        }
+                        .exceptionally {
+                            Log.e(TAG, "$it")
+                            null
+                        }
+
+                    textNode.localPosition = Vector3(0.0f, 0.75f, 0.1f)
+                    anchorNode.addChild(textNode)
                 }
                 .exceptionally {
                     Log.e(TAG, "$it")
@@ -280,6 +362,32 @@ class MainActivity : AppCompatActivity() {
                     arFragment?.arSceneView?.scene?.addChild(anchorNode)
                     anchorNode.localRotation = bottomRotations[i]
                     anchorNode.renderable = viewRenderer
+                    val textView = TextView(this)
+                    textView.text = "x"
+                    textView.setTextColor(Color.RED)
+                    textView.textSize = 50f
+
+                    val layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    layoutParams.gravity = Gravity.CENTER
+                    textView.layoutParams = layoutParams
+
+                    val textNode = Node()
+                    ViewRenderable.builder()
+                        .setView(this, textView)
+                        .build()
+                        .thenAccept { viewRenderable ->
+                            textNode.renderable = viewRenderable
+                        }
+                        .exceptionally {
+                            Log.e(TAG, "$it")
+                            null
+                        }
+
+                    textNode.localPosition = Vector3(0.0f, 0.75f, 0.1f)
+                    anchorNode.addChild(textNode)
                 }
                 .exceptionally {
                     Log.e(TAG, "$it")
