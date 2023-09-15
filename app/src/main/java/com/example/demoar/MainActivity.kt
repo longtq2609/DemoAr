@@ -25,7 +25,6 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.FixedHeightViewSizer
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.ArFragment
-import com.google.ar.sceneform.ux.TransformableNode
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -140,31 +139,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun addNode() {
 
-        val imageView = ImageView(this)
-        Glide.with(this)
-            .load(R.drawable.circle_forcus)
-            .apply(RequestOptions().centerCrop())
-            .override(100, 100)
-            .into(imageView)
-
-        ViewRenderable.builder()
-            .setView(this, imageView)
-            .build()
-            .thenAccept { viewRenderer ->
-                val node = TransformableNode(arFragment?.transformationSystem)
-                node.renderable = viewRenderer
-                node.setOnTapListener { _, _ ->
-                    node.worldPosition = arFragment?.arSceneView?.scene?.camera?.worldPosition
-
-                }
-
-            }
-            .exceptionally {
-                Log.e(TAG, "$it")
-                null
-            }
-
-
         val distance = sqrt(3.0)
         val width = 2.0
 
@@ -186,6 +160,43 @@ class MainActivity : AppCompatActivity() {
             Quaternion(0f, 1f, 0f, PI.toFloat() / 2f),
         )
 
+        val topPositions = listOf(
+            Vector3(0.0f, 1f, -distance.toFloat()),
+            Vector3((3.0 * width / 4.0).toFloat(), 1f, (-distance / 2.0).toFloat()),
+            Vector3((3.0 * width / 4.0).toFloat(), 1f, (distance / 2.0).toFloat()),
+            Vector3(0.0f, 1f, distance.toFloat()),
+            Vector3((-3.0 * width / 4.0).toFloat(), 1f, (distance / 2.0).toFloat()),
+            Vector3((-3.0 * width / 4.0).toFloat(), 1f, (-distance / 2.0).toFloat()),
+        )
+
+        val topRotations = listOf(
+            Quaternion(0f, 1f, PI.toFloat() / 8, 0f),
+            Quaternion(-PI.toFloat() / 5, 1f, -PI.toFloat() / 8, -PI.toFloat() / 2f),
+            Quaternion(-PI.toFloat() / 5, 1f, -2 * PI.toFloat() / 8, -2 * PI.toFloat() / 8f),
+            Quaternion(0f, 1f, -PI.toFloat() / 8, 0f),
+            Quaternion(PI.toFloat() / 5, 1f, -2 * PI.toFloat() / 8, 2 * PI.toFloat() / 8f),
+            Quaternion(PI.toFloat() / 5, 1f, -PI.toFloat() / 8, PI.toFloat() / 2f),
+        )
+
+        val bottomY = -1.2f
+        val bottomPositions = listOf(
+            Vector3(0.0f, bottomY, -distance.toFloat()),
+            Vector3((3.0 * width / 4.0).toFloat(), bottomY, (-distance / 2.0).toFloat()),
+            Vector3((3.0 * width / 4.0).toFloat(), bottomY, (distance / 2.0).toFloat()),
+            Vector3(0.0f, bottomY, distance.toFloat()),
+            Vector3((-3.0 * width / 4.0).toFloat(), bottomY, (distance / 2.0).toFloat()),
+            Vector3((-3.0 * width / 4.0).toFloat(), bottomY, (-distance / 2.0).toFloat()),
+        )
+
+        val bottomRotations = listOf(
+            Quaternion(0f, 1f, PI.toFloat() / 2, 0f),
+            Quaternion(0f, 1f, PI.toFloat() / 2, -PI.toFloat() / 2f),
+            Quaternion(0f, 1f, -PI.toFloat() / 2, -2 * PI.toFloat() / 8f),
+            Quaternion(0f, 1f, -PI.toFloat() / 2, 0f),
+            Quaternion(0f, 1f, -PI.toFloat() / 2, 2 * PI.toFloat() / 8f),
+            Quaternion(-PI.toFloat() / 3, 1f, PI.toFloat() / 2, PI.toFloat() / 2f),
+        )
+
         val imageResourcesMid = arrayOf(
             R.drawable.img_2,
             R.drawable.img_2,
@@ -193,6 +204,24 @@ class MainActivity : AppCompatActivity() {
             R.drawable.img_2,
             R.drawable.img_2,
             R.drawable.img_2
+        )
+
+        val imageResourcesTop = arrayOf(
+            R.drawable.img_2,
+            R.drawable.img_2,
+            R.drawable.img_2,
+            R.drawable.img_2,
+            R.drawable.img_2,
+            R.drawable.img_2
+        )
+
+        val imageResourcesBottom = arrayOf(
+            R.drawable.img_5,
+            R.drawable.img_5,
+            R.drawable.img_5,
+            R.drawable.img_5,
+            R.drawable.img_5,
+            R.drawable.img_5
         )
 
         for (i in 0 until 6) {
@@ -251,29 +280,12 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
-        val topPositions = listOf(
-            Vector3(0.0f, 1f, -distance.toFloat()),
-            Vector3((3.0 * width / 4.0).toFloat(), 1f, (-distance / 2.0).toFloat()),
-            Vector3((3.0 * width / 4.0).toFloat(), 1f, (distance / 2.0).toFloat()),
-            Vector3(0.0f, 1f, distance.toFloat()),
-            Vector3((-3.0 * width / 4.0).toFloat(), 1f, (distance / 2.0).toFloat()),
-            Vector3((-3.0 * width / 4.0).toFloat(), 1f, (-distance / 2.0).toFloat()),
-        )
-
-        val topRotations = listOf(
-            Quaternion(0f, 1f, 0f, 0f),
-            Quaternion(0f, 1f, 0f, -PI.toFloat() / 2f),
-            Quaternion(0f, 1f, 0f, -2 * PI.toFloat() / 8f),
-            Quaternion(0f, 1f, 0f, 0f),
-            Quaternion(0f, 1f, 0f, 2 * PI.toFloat() / 8f),
-            Quaternion(0f, 1f, 0f, PI.toFloat() / 2f),
-        )
 
         for (i in 0 until 6) {
 
             val imageView = ImageView(this)
             Glide.with(this)
-                .load(imageResourcesMid[i % imageResourcesMid.size])
+                .load(imageResourcesTop[i % imageResourcesTop.size])
                 .apply(RequestOptions().centerCrop())
                 .override(250, 250)
                 .into(imageView)
@@ -324,29 +336,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        val bottomY = -3f
-        val bottomPositions = listOf(
-            Vector3(0.0f, bottomY, -distance.toFloat()),
-            Vector3((3.0 * width / 4.0).toFloat(), bottomY, (-distance / 2.0).toFloat()),
-            Vector3((3.0 * width / 4.0).toFloat(), bottomY, (distance / 2.0).toFloat()),
-            Vector3(0.0f, bottomY, distance.toFloat()),
-            Vector3((-3.0 * width / 4.0).toFloat(), bottomY, (distance / 2.0).toFloat()),
-            Vector3((-3.0 * width / 4.0).toFloat(), bottomY, (-distance / 2.0).toFloat()),
-        )
-
-        val bottomRotations = listOf(
-            Quaternion(0f, 1f, 0f, 0f),
-            Quaternion(0f, 1f, 0f, -PI.toFloat() / 2f),
-            Quaternion(0f, 1f, 0f, -2 * PI.toFloat() / 8f),
-            Quaternion(0f, 1f, 0f, 0f),
-            Quaternion(0f, 1f, 0f, 2 * PI.toFloat() / 8f),
-            Quaternion(0f, 1f, 0f, PI.toFloat() / 2f),
-        )
 
         for (i in 0 until 6) {
             val imageView = ImageView(this)
             Glide.with(this)
-                .load(imageResourcesMid[i % imageResourcesMid.size])
+                .load(imageResourcesBottom[i % imageResourcesBottom.size])
                 .apply(RequestOptions().centerCrop())
                 .override(250, 250)
                 .into(imageView)
